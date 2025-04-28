@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出海导航站</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --hover-color: #3a56d4;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #eaeaea;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding-top: 60px;
+        }
+
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .site-title {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .category {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .link-card {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            background-color: rgba(67, 97, 238, 0.05);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .link-card:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateX(3px);
+        }
+
+        .link-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .link-desc {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .footer {
+            padding: 20px 0;
+            text-align: center;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .category {
+                margin-bottom: 20px;
+            }
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            border-radius: 30px;
+            padding-left: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+
+        .theme-switch {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            background-color: #eaeaea;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch:hover {
+            background-color: #d8d8d8;
+        }
+
+        .dark-mode {
+            --primary-color: #7b9eff;
+            --hover-color: #6a8ae6;
+            --background-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #333;
+        }
+
+        .dark-mode .navbar,
+        .dark-mode .footer {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+
+        .dark-mode .link-card {
+            background-color: rgba(123, 158, 255, 0.05);
+        }
+
+        .dark-mode .link-card:hover {
+            background-color: rgba(123, 158, 255, 0.1);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand site-title" href="#">出海导航站</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <div class="theme-switch" id="themeSwitch">
+                            <i class="bi bi-sun-fill me-1"></i>
+                            <span>主题切换</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="search-container">
+                    <input type="text" class="form-control search-input" id="searchInput" placeholder="搜索工具或网站...">
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">出海工具站</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">基础工具</h3>
+                        <a href="https://supabase.com/dashboard/org/zatjntlspmzmobvrbamv" class="link-card">
+                            <div class="link-title">数据库—Supabase</div>
+                            <div class="link-desc">开源的 Firebase 替代品</div>
+                        </a>
+                        <a href="https://bolt.new/" class="link-card">
+                            <div class="link-title">bolt.new</div>
+                            <div class="link-desc">快速创建 Web 应用原型</div>
+                        </a>
+                        <a href="https://www.trickle.so/" class="link-card">
+                            <div class="link-title">Trickle AI</div>
+                            <div class="link-desc">构建网站、AI 应用和表单</div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">需求调研</h3>
+                        <a href="https://ahrefs.com/keyword-difficulty" class="link-card">
+                            <div class="link-title">关键词难度</div>
+                            <div class="link-desc">评估关键词竞争难度</div>
+                        </a>
+                        <a href="https://theresanaiforthat.com/requests" class="link-card">
+                            <div class="link-title">AI 导航站需求列表</div>
+                            <div class="link-desc">用户提交的 AI 工具需求</div>
+                        </a>
+                        <a href="https://www.toolify.ai/Best-AI-Tools-revenue" class="link-card">
+                            <div class="link-title">Toolify 榜单</div>
+                            <div class="link-desc">AI 工具收入榜单</div>
+                        </a>
+                        <a href="https://www.searchsuggest.tips/?keyword=" class="link-card">
+                            <div class="link-title">谷歌下拉词 Search Suggest</div>
+                            <div class="link-desc">查看谷歌搜索建议关键词</div>
+                        </a>
+                        <a href="https://trends.google.ad/trending?geo=US&hl=zh-CN" class="link-card">
+                            <div class="link-title">Google 趋势</div>
+                            <div class="link-desc">热门搜索趋势分析</div>
+                        </a>
+                        <a href="https://theresanaiforthat.com/" class="link-card">
+                            <div class="link-title">There's An AI For That</div>
+                            <div class="link-desc">AI 工具导航目录</div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">域名查询</h3>
+                        <a href="https://instantdomainsearch.com/" class="link-card">
+                            <div class="link-title">Instant Domain Search</div>
+                            <div class="link-desc">实时域名搜索和可用性检查</div>
+                        </a>
+                        <a href="https://query.domains/" class="link-card">
+                            <div class="link-title">Query.Domains</div>
+                            <div class="link-desc">批量检查域名可用性</div>
+                        </a>
+                        <a href="https://leandomainsearch.com/" class="link-card">
+                            <div class="link-title">Lean Domain Search</div>
+                            <div class="link-desc">快速寻找可用域名</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">域名注册</h3>
+                        <a href="https://www.spaceship.com/zh/launchpad/" class="link-card">
+                            <div class="link-title">Spaceship</div>
+                            <div class="link-desc">域名购买服务</div>
+                        </a>
+                        <a href="https://porkbun.com/" class="link-card">
+                            <div class="link-title">Porkbun</div>
+                            <div class="link-desc">价格实惠的域名注册商</div>
+                        </a>
+                        <a href="https://www.namecheap.com/" class="link-card">
+                            <div class="link-title">Namecheap</div>
+                            <div class="link-desc">便宜域名注册服务</div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">代码&网站托管</h3>
+                        <a href="https://github.com/" class="link-card">
+                            <div class="link-title">GitHub</div>
+                            <div class="link-desc">代码托管和版本控制平台</div>
+                        </a>
+                        <a href="https://dash.cloudflare.com/" class="link-card">
+                            <div class="link-title">Cloudflare</div>
+                            <div class="link-desc">网站托管和 CDN 服务</div>
+                        </a>
+                        <a href="https://vercel.com/" class="link-card">
+                            <div class="link-title">Vercel</div>
+                            <div class="link-desc">前端应用部署平台</div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">数据后台</h3>
+                        <a href="https://www.bing.com/webmasters/about" class="link-card">
+                            <div class="link-title">Bing Webmaster Tools</div>
+                            <div class="link-desc">必应站长工具</div>
+                        </a>
+                        <a href="https://search.google.com/search-console" class="link-card">
+                            <div class="link-title">Google Search Console</div>
+                            <div class="link-desc">谷歌搜索控制台</div>
+                        </a>
+                        <a href="https://analytics.google.com/analytics/web/" class="link-card">
+                            <div class="link-title">Google Analytics</div>
+                            <div class="link-desc">谷歌分析工具</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">竞品调研</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">数据分析</h3>
+                        <a href="https://aitdk.com/zh" class="link-card">
+                            <div class="link-title">AiTDK</div>
+                            <div class="link-desc">查看网站流量和关键词</div>
+                        </a>
+                        <a href="https://ahrefs.com/free-seo-tools" class="link-card">
+                            <div class="link-title">Ahrefs 免费工具</div>
+                            <div class="link-desc">查看外链和关键词数据</div>
+                        </a>
+                        <a href="https://www.semrush.com/" class="link-card">
+                            <div class="link-title">SEMrush</div>
+                            <div class="link-desc">网站关键词和竞争分析</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">网站模板</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">上站模板</h3>
+                        <a href="https://github.com/openRin/Rin" class="link-card">
+                            <div class="link-title">openRin/Rin</div>
+                            <div class="link-desc">基于 Cloudflare 的动态博客</div>
+                        </a>
+                        <a href="https://github.com/ixartz/Next-js-Boilerplate" class="link-card">
+                            <div class="link-title">Next.js Boilerplate</div>
+                            <div class="link-desc">Next.js 项目模板</div>
+                        </a>
+                        <a href="https://github.com/ixartz/SaaS-Boilerplate" class="link-card">
+                            <div class="link-title">SaaS Boilerplate</div>
+                            <div class="link-desc">SaaS 应用程序模板</div>
+                        </a>
+                        <a href="https://github.com/ixartz/Next-JS-Landing-Page-Starter-Template" class="link-card">
+                            <div class="link-title">Next.js Landing Page</div>
+                            <div class="link-desc">落地页模板</div>
+                        </a>
+                        <a href="https://github.com/wasp-lang/open-saas/" class="link-card">
+                            <div class="link-title">Open SaaS</div>
+                            <div class="link-desc">免费开源 SaaS 应用程序模板</div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">导航站模板</h3>
+                        <a href="https://github.com/fre123-com/fre123-nav/" class="link-card">
+                            <div class="link-title">fre123-nav</div>
+                            <div class="link-desc">免费资源共享平台导航</div>
+                        </a>
+                        <a href="https://github.com/WebStackPage/WebStackPage.github.io" class="link-card">
+                            <div class="link-title">WebStack</div>
+                            <div class="link-desc">响应式网址导航网站</div>
+                        </a>
+                        <a href="https://github.com/6677-ai/tap4-ai-webui" class="link-card">
+                            <div class="link-title">tap4-ai-webui</div>
+                            <div class="link-desc">一键部署 AI 工具目录</div>
+                        </a>
+                        <a href="https://github.com/all-in-aigc/gpts-works" class="link-card">
+                            <div class="link-title">gpts-works</div>
+                            <div class="link-desc">第三方 GPTs 商店</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">信息源</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">行业情报</h3>
+                        <a href="https://newsnow.busiyi.world/c/realtime" class="link-card">
+                            <div class="link-title">NewsNow</div>
+                            <div class="link-desc">实时新闻聚合</div>
+                        </a>
+                        <a href="https://zeli.app/zh" class="link-card">
+                            <div class="link-title">Zeli</div>
+                            <div class="link-desc">中文阅读 Hacker News 和 AI 论文摘要</div>
+                        </a>
+                        <a href="https://thehackernews.com/" class="link-card">
+                            <div class="link-title">The Hacker News</div>
+                            <div class="link-desc">黑客和网络安全新闻</div>
+                        </a>
+                        <a href="https://www.producthunt.com/" class="link-card">
+                            <div class="link-title">Product Hunt</div>
+                            <div class="link-desc">科技界最好的新产品</div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">出海指南</h3>
+                        <a href="https://news.ycombinator.com/item?id=42373343" class="link-card">
+                            <div class="link-title">HN: 副业月入$500</div>
+                            <div class="link-desc">Hacker News 上的创业讨论</div>
+                        </a>
+                        <a href="https://www.500mrr.com/" class="link-card">
+                            <div class="link-title">500MRR</div>
+                            <div class="link-desc">月收入 $500 的项目分享</div>
+                        </a>
+                        <a href="https://docs.google.com/spreadsheets/d/1eUni44pIURML2VWFFXKzNmm-WKuuam9_ynr5Fo_Q74M/edit?gid=83151001#gid=83151001" class="link-card">
+                            <div class="link-title">Solopreneur Report</div>
+                            <div class="link-desc">独立创业者报告</div>
+                        </a>
+                        <a href="https://liberating-doll-b8a.notion.site/Reddit-1a8e8aed91b18021839ecba8b74e530b" class="link-card">
+                            <div class="link-title">Reddit 子社区</div>
+                            <div class="link-desc">创业和营销相关的 Reddit 社区</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">SEO教程</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="category">
+                        <h3 class="category-title">SEO学习资源</h3>
+                        <a href="https://developers.google.com/search/docs?hl=zh-cn" class="link-card">
+                            <div class="link-title">Google 搜索中心</div>
+                            <div class="link-desc">官方SEO文档和最佳实践</div>
+                        </a>
+                        <a href="https://ahrefs.com/seo" class="link-card">
+                            <div class="link-title">Ahrefs SEO入门</div>
+                            <div class="link-desc">SEO入门七篇教程</div>
+                        </a>
+                        <a href="https://ahrefs.com/blog/" class="link-card">
+                            <div class="link-title">Ahrefs 博客</div>
+                            <div class="link-desc">SEO和内容营销专业知识</div>
+                        </a>
+                        <a href="https://www.semrush.com/blog/" class="link-card">
+                            <div class="link-title">Semrush 博客</div>
+                            <div class="link-desc">SEO和数字营销策略</div>
+                        </a>
+                        <a href="https://firstpagesage.com/seo-blog/" class="link-card">
+                            <div class="link-title">FirstPageSage 博客</div>
+                            <div class="link-desc">SEO和内容营销分析</div>
+                        </a>
+                        <a href="https://searchengineland.com/" class="link-card">
+                            <div class="link-title">Search Engine Land</div>
+                            <div class="link-desc">搜索引擎行业资讯</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top" id="backToTop">
+        <i class="bi bi-arrow-up"></i>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 出海导航站 | 聚合优质出海资源，助力全球化创业</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function() {
+            let searchTerm = this.value.toLowerCase();
+            let linkCards = document.querySelectorAll('.link-card');
+            
+            linkCards.forEach(card => {
+                let title = card.querySelector('.link-title').textContent.toLowerCase();
+                let desc = card.querySelector('.link-desc').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || desc.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // 隐藏空的分类
+            document.querySelectorAll('.category').forEach(category => {
+                let visibleLinks = Array.from(category.querySelectorAll('.link-card')).filter(link => link.style.display !== 'none');
+                if (visibleLinks.length === 0) {
+                    category.style.display = 'none';
+                } else {
+                    category.style.display = 'block';
+                }
+            });
+        });
+
+        // 主题切换
+        document.getElementById('themeSwitch').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            let icon = this.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('bi-sun-fill');
+                icon.classList.add('bi-moon-fill');
+            } else {
+                icon.classList.remove('bi-moon-fill');
+                icon.classList.add('bi-sun-fill');
+            }
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('#themeSwitch i').classList.remove('bi-sun-fill');
+            document.querySelector('#themeSwitch i').classList.add('bi-moon-fill');
+        }
+
+        // 返回顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html> 
